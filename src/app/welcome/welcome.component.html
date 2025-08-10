@@ -1,0 +1,18 @@
+<div class="welcome-container">
+  <h1>{{ welcomeMessage }}</h1>
+  
+  <div class="info-card">
+    <p>Fecha actual: {{ currentDate | date:'fullDate' }}</p>
+    <p *ngIf="currentUser">Rol: {{ currentUser.role }}</p>
+    
+    <button 
+      class="logout-btn"
+      (click)="logout()">
+      Cerrar sesión
+    </button>
+  </div>
+  
+  <nav>
+    <a routerLink="/dashboard">Ir al dashboard</a>
+  </nav>
+</div>

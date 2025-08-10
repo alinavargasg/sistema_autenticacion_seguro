@@ -1,0 +1,34 @@
+<div class="login-container">
+  <h2>Inicio de Sesión Seguro</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label>Email:</label>
+      <input type="email" formControlName="email" required>
+      <div *ngIf="loginForm.get('email')?.errors as err">
+        <div *ngIf="err['required']" class="error">Email es requerido</div>
+        <div *ngIf="err['invalidEmail']" class="error">Formato de email inválido</div>
+        <div *ngIf="err['disposableEmail']" class="error">No se permiten emails temporales</div>
+        <div *ngIf="err['xssDetected']" class="error">Caracteres no permitidos detectados</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña:</label>
+      <input type="password" formControlName="password" required>
+    </div>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" formControlName="remember"> Recordar sesión
+      </label>
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid || loading">
+      {{ loading ? 'Verificando...' : 'Ingresar' }}
+    </button>
+
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+  </form>
+</div>
