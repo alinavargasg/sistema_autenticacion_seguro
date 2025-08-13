@@ -1,4 +1,0 @@
-{
-  "/api/*": "/$1",
-  "/auth/csrf-token": "/tokens?userId=:userId"  
-}

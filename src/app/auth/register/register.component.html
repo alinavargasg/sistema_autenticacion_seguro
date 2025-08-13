@@ -2,9 +2,6 @@
 <div class="register-container">
   <h2>Registro Seguro</h2>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
 
     <div *ngIf="registerForm.errors as formErrors" class="form-error">
       <div *ngIf="formErrors['registrationError']">
