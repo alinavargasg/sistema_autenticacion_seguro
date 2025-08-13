@@ -17,6 +17,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "baseHref": "/",
             "polyfills": ["zone.js", "src/polyfills.ts"],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
@@ -24,7 +25,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [
@@ -38,6 +45,7 @@
           },
           "configurations": {
             "production": {
+              "baseHref": "/mi-app/",
               "budgets": [
                 {
                   "type": "initial",
@@ -83,7 +91,13 @@
             "assets": [
               {
                 "glob": "**/*",
-                "input": "public"
+                "input": "src/assets",
+                "output": "/assets/"
+              },
+              {
+                "glob": "**/*",
+                "input": "public",
+                "output": "/"
               }
             ],
             "styles": [

@@ -1,8 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-import { UserLogin, UserRegister, User } from '../../../shared/models/user.model';
+import { User } from '../../../shared/models/user.model';
+
+const API_URL = 'http://localhost:3000'; // URL de JSON Server
 
 @Injectable({
   providedIn: 'root'
@@ -19,39 +21,80 @@ export class ApiService {
     });
   }
 
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Ocurrió un error';
+    
+    if (error.error instanceof ErrorEvent) {
+      // Error del lado del cliente
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del servidor
+      errorMessage = `Código: ${error.status}\nMensaje: ${error.message}`;
+      
+      // Manejo específico para errores comunes
+      if (error.status === 401) {
+        errorMessage = 'Sesión expirada. Por favor ingresa nuevamente.';
+        // Aquí podrías redirigir al login
+      } else if (error.status === 403) {
+        errorMessage = 'No tienes permisos para esta acción';
+      } else if (error.status === 0) {
+        errorMessage = 'No se pudo conectar al servidor';
+      }
+    }
+    
+    console.error('Error en la solicitud:', errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
+
   /**
    * Método genérico para solicitudes seguras
    */
-  private secureRequest<T>(
-    method: string,
-    endpoint: string,
-    body?: any,
-    customHeaders?: HttpHeaders
-  ): Observable<T> {
-    const url = `${this.apiUrl}/${endpoint}`;
-    const headers = customHeaders || this.getHeaders();
+private secureRequest<T>(
+  method: string,
+  endpoint: string,
+  body?: any,
+  customHeaders?: HttpHeaders
+): Observable<T> {
+  const url = `${this.apiUrl}/${endpoint}`;
+  const headers = customHeaders || this.getHeaders();
 
-    return this.http.request<T>(method, url, {
-      body,
-      headers,
-      withCredentials: true // Importante para cookies HttpOnly
-    });
+  return this.http.request<T>(method, url, {
+    body,
+    headers,
+    withCredentials: true
+  }).pipe(
+    catchError((error: HttpErrorResponse) => {
+      const errorMessage = this.getErrorMessage(error);
+      console.error(`Error en ${method} ${url}:`, errorMessage);
+      return throwError(() => new Error(errorMessage));
+    })
+  );
+}
+
+private getErrorMessage(error: HttpErrorResponse): string {
+  if (error.error instanceof ErrorEvent) {
+    return `Error de cliente: ${error.error.message}`;
   }
 
-  /**
-   * Servicios de Autenticación
-   */
-  login(credentials: UserLogin): Observable<{ access_token: string }> {
-    return this.secureRequest('POST', 'auth/login', credentials);
+  switch (error.status) {
+    case 0:
+      return 'Error de conexión: No se pudo contactar al servidor';
+    case 400:
+      return 'Solicitud inválida: ' + (error.error?.message || 'Datos incorrectos');
+    case 401:
+      return 'No autorizado: Sesión expirada o credenciales inválidas';
+    case 403:
+      return 'Prohibido: No tienes permisos para esta acción';
+    case 404:
+      return 'Recurso no encontrado';
+    case 409:
+      return 'Conflicto: ' + (error.error?.message || 'El recurso ya existe');
+    case 500:
+      return 'Error interno del servidor';
+    default:
+      return `Error ${error.status}: ${error.message}`;
   }
-
-  register(userData: UserRegister): Observable<User> {
-    return this.secureRequest('POST', 'auth/register', userData);
-  }
-
-  logout(): Observable<void> {
-    return this.secureRequest('POST', 'auth/logout');
-  }
+}
 
   /**
    * Servicios de Usuario
@@ -75,3 +118,4 @@ export class ApiService {
     return this.secureRequest('POST', 'actions/sensitive');
   }
 }
+

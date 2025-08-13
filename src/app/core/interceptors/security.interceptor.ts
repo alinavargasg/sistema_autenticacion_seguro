@@ -1,13 +1,10 @@
-import { Injectable, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import {
   HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
   HttpErrorResponse
 } from '@angular/common/http';
 import { HttpInterceptorFn } from '@angular/common/http';
-import { Observable, catchError, throwError } from 'rxjs';
+import { catchError, throwError } from 'rxjs';
 import { AuthService } from '../services/auth/auth.service';
 import { Router } from '@angular/router';
 
@@ -19,12 +16,16 @@ export const securityInterceptor: HttpInterceptorFn = (req, next) => {
   const authReq = addAuthHeader(req, authService);
 
   return next(authReq).pipe(
-    catchError((error) => {
+    catchError((error: HttpErrorResponse) => {
       if (error.status === 401 || error.status === 403) {
-        authService.logout();
-        router.navigate(['/login'], { 
-          queryParams: { returnUrl: router.url } 
+
+        authService.logout().subscribe(() => {
+          router.navigate(['/login'], { 
+            replaceUrl: true,  // ← Esto limpia el historial
+            queryParams: { sessionExpired: true }  // Usa un parámetro diferente
+          });
         });
+
       }
       return throwError(() => error);
     })
@@ -41,9 +42,8 @@ const addAuthHeader = (
   if (token && !req.url.includes('/login') && !req.url.includes('/register')) {
     return req.clone({
       setHeaders: { Authorization: `Bearer ${token}` },
-      withCredentials: true
     });
   }
   
-  return req.clone({ withCredentials: true });
+  return req;
 };

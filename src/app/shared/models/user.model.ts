@@ -21,7 +21,7 @@ export interface UserLogin {
   rememberMe?: boolean;
 }
 
-export interface UserRegister {
+export interface RegisterFormData {
   email: string;
   username: string;
   password: string;
@@ -70,6 +70,11 @@ export interface PaginatedUsers {
   page: number;
   limit: number;
 }
+
+
+export type RegisterFormErrors = {
+  [key in keyof RegisterFormData]?: string;
+};
 
 // Validación de contraseña segura
 export const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;

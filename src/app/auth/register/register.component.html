@@ -2,6 +2,18 @@
 <div class="register-container">
   <h2>Registro Seguro</h2>
   <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <div *ngIf="registerForm.errors as formErrors" class="form-error">
+      <div *ngIf="formErrors['registrationError']">
+        {{ formErrors['registrationError'] }}
+      </div>
+      <div *ngIf="formErrors['passwordMismatch'] && !formErrors['registrationError']">
+        Las contraseñas no coinciden
+      </div>
+    </div>
     <!-- Campo Username -->
     <div class="form-group" [class.invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
       <label for="username">Nombre de usuario:</label>
@@ -12,18 +24,13 @@
         autocomplete="username"
         required>
       
-        <!-- Cambia esto -->
-        <div *ngIf="registerForm.get('password')?.errors?.['passwordStrength'] as err">
-        <div *ngIf="err['missingUpperCase']">• 1 mayúscula</div>
-        <div *ngIf="err['missingLowerCase']">• 1 minúscula</div>
-        <div *ngIf="err['missingNumber']">• 1 número</div>
-        <div *ngIf="err['missingSpecialChar']">• 1 carácter especial (@$!%*?&)</div>
-        <div *ngIf="err['minlength']">• Mínimo 8 caracteres</div>
-        </div>    
-
-
+      <div *ngIf="registerForm.get('username')?.errors as err" class="error-messages">
+        <div *ngIf="err['required']">Nombre de usuario requerido</div>
+        <div *ngIf="err['minlength']">Mínimo 3 caracteres</div>
+        <div *ngIf="err['maxlength']">Máximo 20 caracteres</div>
+        <div *ngIf="err['pattern']">Solo letras, números y _-</div>
+      </div>
     </div>
-
     <!-- Campo Email -->
     <div class="form-group" [class.invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
       <label for="email">Email:</label>

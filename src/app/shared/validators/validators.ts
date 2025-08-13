@@ -12,7 +12,7 @@ export const passwordStrengthValidator: ValidatorFn = (control: AbstractControl)
   if (!/[A-Z]/.test(value)) errors['missingUpperCase'] = true;
   if (!/[a-z]/.test(value)) errors['missingLowerCase'] = true;
   if (!/\d/.test(value)) errors['missingNumber'] = true;
-  if (!/[@$!%*?&]/.test(value)) errors['missingSpecialChar'] = true;
+  if (!/[@$!%*?&.]/.test(value)) errors['missingSpecialChar'] = true;
   if (value.length < 8) errors['minlength'] = { requiredLength: 8 };
 
   return Object.keys(errors).length ? { passwordStrength: errors } : null;
@@ -20,12 +20,15 @@ export const passwordStrengthValidator: ValidatorFn = (control: AbstractControl)
 
 // Validador de coincidencia de contraseñas
 export const passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-  const password = control.get('password')?.value;
-  const confirmPassword = control.get('confirmPassword')?.value;
+  const password = control.get('password');
+  const confirmPassword = control.get('confirmPassword');
 
-  return password && confirmPassword && password !== confirmPassword 
-    ? { passwordMismatch: true } 
-    : null;
+  if (!password || !confirmPassword) return null;
+
+  return password.value === confirmPassword.value ? null : { 
+    passwordMismatch: true,
+    registrationError: 'Las contraseñas no coinciden'
+  };
 };
 
 // Validador contra XSS
