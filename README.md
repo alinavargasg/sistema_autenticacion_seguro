@@ -1,7 +1,7 @@
 # Frontend
 
 Este proyecto fue generado usando [Angular CLI](https://github.com/angular/angular-cli) version 20.1.5.
-El objetivo Construir un flujo mínimo de autenticación (registro → login → bienvenida) aplicando buenas prácticas de seguridad en el código tanto del lado del cliente (JS) como del servidor (backend de su elección).
+El objetivo Construir un flujo mínimo de autenticación (registro → login → bienvenida) aplicando buenas prácticas de seguridad en el código tanto del lado del cliente  como del servidor.
 
 ## Development server
 
