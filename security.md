@@ -28,6 +28,7 @@ explotadas por un atacante.
   - **Frontend (Angular):** Mensajes amigables y comprensibles para el usuario final, por ejemplo:  
     > "Ha ocurrido un error al procesar su solicitud. Por favor, inténtelo más tarde."
   - **Backend:** Registro detallado con timestamp, endpoint, parámetros relevantes y stack trace (solo en entorno de desarrollo).
+- **Sesiones prolongadas** Cierre automático por inactividad. 
 
 ---
 
@@ -37,7 +38,6 @@ explotadas por un atacante.
 |--------|-------------|-------------|
 | **Ausencia de MFA** | Actualmente no se usa autenticación multifactor. | Implementar MFA (SMS, correo o app autenticadora). |
 | **No hay detección de IP sospechosa** | No se revisa la geolocalización o cambios drásticos de IP. | Integrar análisis de comportamiento y alertas. |
-| **Sesiones prolongadas** | Algunos usuarios mantienen sesiones activas mucho tiempo. | Implementar cierre automático por inactividad. |
 | **Falta de logs avanzados** | Los registros no se centralizan ni tienen análisis automático. | Usar un sistema SIEM para análisis de eventos. |
 | **Gestión básica de contraseñas** | No se notifica si una contraseña fue filtrada. | Integrar verificación contra bases de datos de contraseñas comprometidas (ej. HaveIBeenPwned API). |
 
