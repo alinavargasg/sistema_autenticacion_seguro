@@ -35,7 +35,7 @@ export class RegisterComponent {
       Validators.pattern(USERNAME_REGEX),
       xssSanitizationValidator
     ]],
-    email: ['', [Validators.required/*, secureEmailValidator*/, xssSanitizationValidator]],
+    email: ['', [Validators.required, xssSanitizationValidator]],
     password: ['', [
       Validators.required,
       passwordStrengthValidator,
